@@ -1,1 +1,23 @@
 
+ssl重协商背景： 
+支持ssl重协商可管理的目的是为了防止恶意攻击者向网元反复进行重协商，由于重协商过程涉及大数据运算，耗用大量cpu等资源，网元长时间遭受攻击会导致资源耗尽而运行异常，因此需要对ssl重协商进行合理管理。 支持SSL重协商可管理，包括设置是否允许重协商，设置重协商间隔时间和查询设置信息。重协商管理功能参数说明如下： 1、是否允许重协商 参数包括两个值：允许重协商，禁止重协商但保持当前连接 2、重协商间隔 SSL重协
+
+
+
+
+
+查看有没有重协商漏洞，
+在虚机中使用openssl命令 openssl s_client -connect IP：PORT 然后，输入命令“R",查看返回值，如果返回值与下列结果一致，说明有重协商漏洞
+R 
+RENEGOTIATING 
+depth=0 C = CN, O = XXX, CN = XXXXXX.middleware-service 
+verify error:num=20:unable to get local issuer certificate 
+verify return:1 
+depth=0 C = CN, O = XXX, CN = XXXXXX.middleware-service 
+verify error:num=27:certificate not trusted 
+verify return:1
+depth=0 C = CN, O = XXX, CN = XXXXXX.middleware-service
+verify error:num=21:unable to verify the first certificate 
+verify return:1
+
+解决方式： 检查下tomcat是否有配置allowUnsafeLegacyRenegotiation，保证没有设置该配置或者配置值为false就可以。 另外如果nessus扫描报了重协商问题，要再单独分析
